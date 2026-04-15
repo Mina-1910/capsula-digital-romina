@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cápsula Digital - Sistema de Seguridad</title>
+    <style>
+        /* --- ESTILO MODERNO / HACKER --- */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a0a;
+            color: #00ff41;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* El Guardian con suavizado */
+        #guardian {
+            position: fixed;
+            width: 80px;
+            pointer-events: none;
+            z-index: 100;
+            /* Eliminamos el transition de CSS para que el JS maneje el deslizamiento suave */
+            will-change: transform;
+        }
+
+        .chest-container {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chest-container img {
+            width: 150px;
+            filter: drop-shadow(0 0 10px #00f3ff);
+        }
+
+        .chest-container:hover img {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 20px #00f3ff);
+        }
+
+        /* --- VENTANA MODAL --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #111;
+            padding: 40px;
+            border: 2px solid #00ff41;
+            box-shadow: 0 0 30px #00ff41;
+            text-align: center;
+            border-radius: 15px;
+        }
+
+        .close-btn {
+            margin-top: 20px;
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="guardian.png" id="guardian" alt="Guardián">
+
+    <div class="chest-container" onclick="openModal()">
+        <img src="cofre.png" alt="Cofre de Seguridad">
+        <p>[ ACCESO RESTRINGIDO ]</p>
+    </div>
+
+    <div id="secretModal" class="modal">
+        <div class="modal-content">
+            <h2>¡Acceso Concedido!</h2>
+            <p>Bienvenida, Agente <strong>Romina</strong>.</p>
+            <img src="tesoro.gif" alt="Recompensa" style="width: 200px; margin-top: 20px; border-radius: 10px;">
+            <br>
+            <button class="close-btn" onclick="closeModal()">Cerrar Terminal</button>
+        </div>
+    </div>
+
+    <script>
+        const guardian = document.getElementById('guardian');
+        const modal = document.getElementById('secretModal');
+
+        // Variables para la posición del mouse y del guardián
+        let mouseX = 0;
+        let mouseY = 0;
+        let guardianX = 0;
+        let guardianY = 0;
+
+        // Sensibilidad del deslizamiento (0.1 es suave, 1 es instantáneo)
+        const speed = 0.08; 
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Función de animación para crear el efecto de deslizamiento (Lerp)
+        function animate() {
+            // Calculamos la distancia y la recorremos poco a poco
+            guardianX += (mouseX - guardianX) * speed;
+            guardianY += (mouseY - guardianY) * speed;
+
+            // Aplicamos la posición restando la mitad del tamaño (40px) para centrarlo
+            guardian.style.transform = `translate(${guardianX - 40}px, ${guardianY - 40}px)`;
+
+            // Ejecutamos la animación en el siguiente frame
+            requestAnimationFrame(animate);
+        }
+
+        // Iniciar animación
+        animate();
+
+        function openModal() {
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) closeModal();
+        }
+    </script>
+</body>
+</html>
